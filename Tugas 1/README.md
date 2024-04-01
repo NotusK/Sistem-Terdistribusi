@@ -115,34 +115,7 @@ sudo cp index.nginx-debian.html index html
 sudo nano index.html
 ```
 
-```
-<!DOCTYPE html>
-<html>
-<head>
-<title>Welcome to Sister!</title>
-<style>
-    body {
-        width: 35em;
-        margin: 0 auto;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
-    }
-</style>
-</head>
-<body>
-<h1>Welcome to Sistem Terdistribusi Class!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-<p>Aditya Aulia Rohman</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
-<p><em>Thank you for using nginx.</em></p>
-</body>
-</html>
-```
+![Update index.html!](Images/sister-local-Screenshot/18.png)
 
 13. Open notepad as administrator and open file called hosts located in "C:\Windows\System32\drivers\etc"
 
