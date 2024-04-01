@@ -85,17 +85,17 @@ sudo nano sister.local
 
 ```
 server {
-                       listen 80;
-                       listen [::]:80;
+        listen 80;
+        listen [::]:80;
 
-                       server_name sister.local;
+        server_name sister.local;
 
-                       root/var/www/html;
-                       index index.html;
+        root/var/www/html;
+        index index.html;
 
-                       location / {
-                           try_files $uri $uri/ =404
-                       }
+        location / {
+            try_files $uri $uri/ =404
+        }
 }
 ```
 
