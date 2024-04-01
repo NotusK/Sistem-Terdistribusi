@@ -11,22 +11,17 @@ NIM     : 1203210145
 3. Now run this command to install the necessary packages
 
 ```
-function test() {
-  console.log("sudo apt install -y build-essential linux-headers-$(uname -r)");
-}
+sudo apt install -y build-essential linux-headers-$(uname -r)
 ```
 
 4. Change the ubuntu source list in to the code bellow
 
 ```
-function test() {
-  console.log("sudo nano /etc/apt/source.list");
-}
+sudo nano /etc/apt/source.list"
 ```
 
 ```
-function test() {
-  console.log("deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
 deb-src http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
 
 deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse
@@ -39,38 +34,29 @@ deb http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe m
 deb-src http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
 
 deb http://archive.canonical.com/ubuntu/ jammy partner
-deb-src http://archive.canonical.com/ubuntu/ jammy partner");
-}
+deb-src http://archive.canonical.com/ubuntu/ jammy partner
 ```
 
 5. Download and install all the latest packages
 
 ```
-function test() {
-  console.log("sudo apt update");
-}
+sudo apt update
 ```
 
 ```
-function test() {
-  console.log("sudo apt upgrade -y");
-}
+sudo apt upgrade -y
 ```
 
 6. Install lxc
 
 ```
-function test() {
-  console.log("sudo apt-get install lxc lxctl lxc-templates net-tools");
-}
+sudo apt-get install lxc lxctl lxc-templates net-tools
 ```
 
 7. Check the config and make sure everything in enabled
 
 ```
-function test() {
-  console.log("sudo lxc-checkconfig");
-}
+sudo lxc-checkconfig
 ```
 
 ![Check Config!](Images/sister-local-Screenshot/12.png)
@@ -78,36 +64,27 @@ function test() {
 8. Install nginx
 
 ```
-function test() {
-  console.log("sudo apt install nginx nginx-extras");
-}
+sudo apt install nginx nginx-extras
 ```
 
 9. Go to /etc/nginx/sites-enabled/ and copy paste default file as sister.local
 
 ```
-function test() {
-  console.log("cd /etc/nginx/sites-enabled");
-}
+cd /etc/nginx/sites-enabled
 ```
 
 ```
-function test() {
-  console.log("sudo cp default sister.local");
-}
+sudo cp default sister.local
 ```
 
 10. Edit sister.local
 
 ```
-function test() {
-  console.log("sudo nano sister.local");
-}
+sudo nano sister.local
 ```
 
 ```
-function test() {
-  console.log("server {
+server {
                        listen 80;
                        listen [::]:80;
 
@@ -119,35 +96,27 @@ function test() {
                        location / {
                            try_files $uri $uri/ =404
                        }
-    }    ");
 }
 ```
 
 11. Go to /var/www/html/ and copy paste index.nginx-debian.html as index.html
 
 ```
-function test() {
-  console.log("cd /var/www/html/");
-}
+cd /var/www/html/
 ```
 
 ```
-function test() {
-  console.log("sudo cp index.nginx-debian.html index html");
-}
+sudo cp index.nginx-debian.html index html
 ```
 
 12. Edit index.html
 
 ```
-function test() {
-  console.log("sudo nano index.html");
-}
+sudo nano index.html
 ```
 
 ```
-function test() {
-  console.log("<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Welcome to Sister!</title>
@@ -172,8 +141,7 @@ Commercial support is available at
 
 <p><em>Thank you for using nginx.</em></p>
 </body>
-</html>");
-}
+</html>
 ```
 
 13. Open notepad as administrator and open file called hosts located in "C:\Windows\System32\drivers\etc"
@@ -183,4 +151,3 @@ Commercial support is available at
 
 15. Try to open sister.local in a browser
 ![Try sister.local!](Images/sister-local-Screenshot/20.png)
-
