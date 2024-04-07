@@ -1,7 +1,7 @@
 
 # Load Balancing using Round Robin Algorithm
 
-Name    : Aditya Aulia Rohman  
+Nama    : Aditya Aulia Rohman  
 NIM     : 1203210145
 
 1. Make a linux container named microservice3, microservice4, and microservice5 using Debian 10
@@ -87,7 +87,11 @@ sudo nano /etc/hosts
 ```
 ![html!](Images/3.png)
 
-9. Edit sister.local and add the round robbin algorithm
+9. Open Notepad as administrator and go to "C:\Windows\System32\drivers\etc" and open a file called hosts, add "127.0.0.1   app.sister.local"
+
+![html!](Images/extras2.png)
+
+10. Edit sister.local and add the round robbin algorithm
 
 ```
 sudo nano /etc/nginx/sites-enabled/sister.local
@@ -95,21 +99,19 @@ sudo nano /etc/nginx/sites-enabled/sister.local
 
 ![html!](Images/4.png)
 
-10. Check the configuration
+11. Check the configuration
 
 ```
 sudo nginx -t
 ```
 
-11. Reload If the configuration is ok
+12. Reload If the configuration is ok
 
 ```
 sudo nginx -s reload
 ```
 
-![html!](Images/extras.png)
-
-12. Try to curl app.sister.local (server will change on each refresh/curl)
+13. Try to curl app.sister.local (server will change on each refresh/curl)
 
 ```
 sudo curl app.sister.local
@@ -119,7 +121,7 @@ sudo curl app.sister.local
 ![html!](Images/5a.png)
 ![html!](Images/5b.png)
 
-13. Try to run app.sister.local on your browser (server will change on each refresh)
+14. Try to run app.sister.local on your browser (server will change on each refresh)
 
 ![html!](Images/6.png)
 ![html!](Images/6a.png)
