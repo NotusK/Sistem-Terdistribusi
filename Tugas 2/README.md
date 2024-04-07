@@ -1,5 +1,5 @@
 
-# Load Balancing using Road Robin Algorithm
+# Load Balancing using Round Robin Algorithm
 
 1. Make a linux container named microservice3, microservice4, and microservice5 using Debian 10
 
