@@ -107,6 +107,8 @@ sudo nginx -t
 sudo nginx -s reload
 ```
 
+![html!](Images/extras.png)
+
 12. Try to curl app.sister.local (server will change on each refresh/curl)
 
 ```
