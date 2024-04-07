@@ -1,7 +1,7 @@
 
 # Load Balancing using Round Robin Algorithm
 
-Nama    : Aditya Aulia Rohman  
+Name    : Aditya Aulia Rohman  
 NIM     : 1203210145
 
 1. Make a linux container named microservice3, microservice4, and microservice5 using Debian 10
