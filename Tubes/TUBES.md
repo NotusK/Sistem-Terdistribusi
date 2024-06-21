@@ -1538,13 +1538,13 @@ sudo nano main.yml
 ```
 sudo nano /etc/hosts
 ```
-![Image!](assests/hostconfig.jpeg)
+![Image!](assets/hostconfig.jpeg)
 42. setelah membuat ansible, selanjutnya menjalankannya
 ```
 sudo ansible-playbook -i hosts install-laravel.yml -k
 ```
-![Image!](assests/runansiblelaravel.jpeg)
-![Image!](assests/runansiblelaravel2.jpeg)
+![Image!](assets/runansiblelaravel.jpeg)
+![Image!](assets/runansiblelaravel2.jpeg)
 43. konfigurasi vm.local
 ```
 sudo nano /etc/nginx/sites-available/vm.local
