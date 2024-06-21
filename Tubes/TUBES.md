@@ -1534,77 +1534,74 @@ sudo nano main.yml
   become_method: su
   action: service name=nginx state=restarted
 ```
-41. 
+41. selanjutnya konfigurasi hosts di vm
 ```
+sudo nano /etc/hosts
+```
+![Image!](assests/hostconfig.jpeg)
+42. setelah membuat ansible, selanjutnya menjalankannya
+```
+sudo ansible-playbook -i hosts install-laravel.yml -k
+```
+![Image!](assests/runansiblelaravel.jpeg)
+![Image!](assests/runansiblelaravel2.jpeg)
+43. konfigurasi vm.local
+```
+sudo nano /etc/nginx/sites-available/vm.local
+```
+```
+upstream laravel{
+        least_conn;
+        server lxc_php7_1.dev;
+        server lxc_php7_2.dev;
+        server lxc_php7_4.dev;
+        server lxc_php7_6.dev;
+}
+upstream blog{
+        ip_hash;
+        server lxc_php7_2.dev;
+        server lxc_php7_3.dev;
+        server lxc_php7_4.dev;
+        server lxc_php7_5.dev;
+}
+upstream yii{
+        server lxc_php7_1.dev weight=3;
+        server lxc_php7_2.dev weight=2;
+        server lxc_php7_4.dev weight=4;
+        server lxc_php7_5.dev weight=1;
+        server lxc_php7_6.dev weight=6;
+}
+upstream ci{
+        server lxc_php5_1.dev;
+        server lxc_php5_2.dev;
+}
 
-```
-```
+server {
+        listen 80;
+        listen [::]:80;
+        server_name kelompok12.local;
+        root /var/www/html;
+        index index.html;
+        location /app {
+                rewrite /app/?(.*)$ /$1 break;
+                proxy_pass http://ci;
+        }
+        #location /blog {
+                #rewrite /blog?(.*)$ /$1 break;
+                #proxy_pass http://lxc_php7.dev;
+        #}
+        location /phpmyadmin {
+                rewrite /phpmyadmin/?(.*)$ /$1 break;
+                proxy_pass http://lxc_mariadb.dev;
+        }
+        location /product {
+                rewrite /product/?(.*)$ /$1 break;
+                proxy_pass http://yii;
+        }
+        location / {
+                #rewrite /landing/?(.*)$ /$1 break;
+                proxy_pass http://laravel;
+        }
 
+}
 ```
-42. 
-```
-
-```
-```
-
-```
-43. 
-```
-
-```
-```
-
-```
-44. 
-```
-
-```
-```
-
-```
-45. 
-```
-
-```
-```
-
-```
-46. 
-```
-
-```
-```
-
-```
-47. 
-```
-
-```
-```
-
-```
-48. 
-```
-
-```
-```
-
-```
-49. 
-```
-
-```
-```
-
-```
-50. 
-```
-
-```
-```
-
-```
-
-
-
-
