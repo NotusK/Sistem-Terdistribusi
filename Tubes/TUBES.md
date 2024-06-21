@@ -20,14 +20,14 @@ sudo lxc-create -n LXC_DB_SERVER -t download -- --dist debian --release buster -
 ```
 
 2. Setting IP setiap LXC dan set LXC menjadi auto start
-IMAGE
+![Setting!](assets/SettingIPLXC.jpeg)
 3. Install dan setting SSH buat menjadi itu Permitlogin yes
 rssaauthentication yes
 ```
 cd /etc/ssh
 sudo nano sshd_config
 ```
-IMAGE
+![Setting!](assets/sshdconfig.jpeg)
 4. Restart ssh service
 ```
 sudo service sshd restart
@@ -97,7 +97,7 @@ ci_2 ansible_host=lxc_php5_2.dev ansible_ssh_user=root ansible_become_pass=123
     - php
     - lv
 ```
-IMAGE
+![Setting!](assets/installlaravelyml.jpeg)
 11. Membuat install-yii.yml yang berisi
 ```
 ---
@@ -109,7 +109,7 @@ IMAGE
   roles:
     - yii
 ```
-IMAGE
+![Setting!](assets/installyiiyml.jpeg)
 12. Membuat install-ci.yml yang berisi
 ```
 - hosts: ci
@@ -120,3 +120,4 @@ IMAGE
   roles:
     - app
 ```
+![Setting!](assets/installlaravelci.jpeg)
