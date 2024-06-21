@@ -1060,12 +1060,550 @@ sudo mkdir -p wp/handlers
 
 30. 
 ```
+cd wp/tasks
+sudo nano main.yml
+```
+```
+cd wp/tasks
+sudo nano main.yml
+
+---
+- name: delete apt chache
+  become: yes
+  become_user: root
+  become_method: su
+  command: rm -vf /var/lib/apt/lists/*
+
+- name: install requirement
+  become: yes
+  become_user: root
+  become_method: su
+  apt: name={{ item }} state=latest update_cache=true
+  with_items:
+    - nginx
+    - nginx-extras
+    - curl
+    - wget
+    - php7.4
+    - php7.4-fpm
+    - php7.4-curl
+    - php7.4-xml
+    - php7.4-gd
+    - php7.4-opcache
+    - php7.4-mbstring
+    - php7.4-zip
+    - php7.4-json
+    - php7.4-cli
+    - php7.4-mysqlnd
+    - php7.4-xmlrpc
+    - php7.4-curl
+
+- name: wget wordpress
+  shell: wget -c http://wordpress.org/latest.tar.gz
+
+- name: tar latest.tar.gz
+  shell: tar -xvzf latest.tar.gz
+
+- name: copy folder wordpress
+  shell: cp -R wordpress /var/www/html/blog
+
+- name: chmod
+  become: yes
+  become_user: root
+  become_method: su
+  command: chmod 775 -R /var/www/html/blog/
+
+- name: copy wp.conf
+  template:
+    src=templates/wp.conf
+    dest=/var/www/html/blog/wp-config.php
+
+
+- name: copy wp.local
+  template:
+    src=templates/wp.local
+    dest=/etc/nginx/sites-available/{{ domain }}
+  vars:
+    servername: '{{ domain }}'
+
+- name: Symlink wp.local
+  command: ln -sfn /etc/nginx/sites-available/{{ domain }} /etc/nginx/sites-enabled/{{ domain }}
+  notify:
+    - restart nginx
+
+- name: Write {{ domain }} to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ domain }}$'
+    line: "127.0.0.1 {{ domain }}"
+    state: present
+
+- name: enable module php mbstring
+  command: phpenmod mbstring
+  notify:
+    - restart php
+```
+31. 
+```
+cd ../templates
+sudo nano wp.conf
+```
+```
+define('WP_HOME', 'http://news.kelompok12.local' );
+define('WP_SITEURL', 'http://news.kelompok12.local' );
+
+// * MySQL settings - You can get this info from you web host * //
+/** The name of the database for WordPress */
+define( 'DB_NAME', 'blog' );
+
+/** MySQL database username */
+define( 'DB_USER', 'admin' ):
+
+/** MySQL database password */
+define( 'DB_PASSWORD', '123' );
+
+/** MySQL hostname */
+define( 'DB_HOST', '10.0.3.200:3306' );
+
+/** Database charset to use in creating database tables. */
+define( 'DB_CHARSET', 'utf8' );
+
+/** The database collate type. Don't change this if in doubt. */
+define( 'DB_COLLATE', '' );
+
+/**#@+
+ * Authentication unique keys and salts.
+ *
+```
+32. 
+```
+cd ../wp.local
+sudo  nano wp.local
+```
+```
+server {
+     listen 80;
+     listen [::]:80;
+     # Log files for Debugging
+     access_log /var/log/nginx/wordpress-access.log;
+     errpr_log /var/log/nginx/wordpress-error.log;
+     # Webroot Directory fopr WordPress
+     root /var/www/html/blog;
+     index index.php index.html index.htm;
+     # Your Domain Name
+     server_name {{servername}};
+     location / {
+             try_files $uri $uri/ /index.php?$query_string;
+     }
+     # PHP-FPM Configuration Nginx
+     location ~ \.php$ {
+             try_files $uri =404;
+             fastcgi_split_path_info ^(.+\.php)(/.+)$;
+             fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+             fastcgi_index index.php;
+             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+             include fastcgi_params;
+     }
+}
+```
+32. 
+```
+cd ../handlers
+sudo nano main.yml
+```
+```
+---
+- name: restart php
+  become: yes
+  become_user: root
+  become_method: su
+  action: service name=php7.4-fpm state=restarted
+
+- name: restart nginx
+  become: yes
+  become_user: root
+  become_method: su
+  action: service name=nginx state=restarted
+```
+33. selanjutnya code igniter
+```
+cd ../../
+```
+```
+sudo mkdir -p app/tasks
+sudo mkdir -p app/templates
+sudo mkdir -p app/handlers
+```
+34. 
+```
+cd  tasks
+sudo nano main.yml
+```
+```
+---
+- name: delete apt cache
+  become: yes
+  become_user: root
+  become_method: su
+  command: rm -vf /var/lib/apt/lists/*
+
+- name: install requirement dpkg to install php5
+  become: yes
+  become_user: root
+  become_method: su
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+  with_items:
+    - python
+    - ca-certificates
+    - apt-transport-https
+    - wget
+    - curl
+    - python-apt
+    - software-properties-common
+    - git
+
+
+- name: Add key
+  apt_key:
+    url: https://packages.sury.org/php/apt.gpg
+    state: present
+
+- name: Add Php Repository
+  apt_repository:
+    repo: "deb https://packages.sury.org/php/ stretch main"
+    state: present
+    filename: php.list
+    update_cache: true
+
+- name: install nginx php5
+  become: yes
+  become_user: root
+  become_method: su
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+  with_items:
+    - nginx
+    - nginx-extras
+    - php5.6
+    - php5.6-fpm
+    - php5.6-common
+    - php5.6-cli
+    - php5.6-curl
+    - php5.6-mbstring
+    - php5.6-mysqlnd
+    - php5.6-xml
+
+- name: Git clone repo sas-ci
+  become: yes
+  git:
+    repo: '{{ git_url }}'
+    dest: "{{ destdir }}"
+
+- name: Copy app.conf
+  template:
+    src: templates/app.conf
+    dest: "/etc/nginx/sites-available/{{ domain }}"
+  vars:
+    servername: '{{ domain }}'
+
+- name: Delete another nginx config
+  become: yes
+  become_user: root
+  become_method: su
+  command: rm -f /etc/nginx/sites-enabled/*
+
+- name: Symlink app.conf
+  command: ln -sfn /etc/nginx/sites-available/{{ domain }} /etc/nginx/sites-enabled/{{ domain }}
+  notify:
+    - restart nginx
+
+- name: Write
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ domain }}$'
+    line: "127.0.0.1 {{ domain }}"
+    state: present
+```
+35. 
+```
+cd ../templates
+sudo nano app.conf
+```
+```
+server {
+  listen 80;
+  server_name {{servername}};
+  root {{ destdir }};
+  index index.php;
+  location / {
+     try_files $uri $uri/ /index.php?$query_string;
+  }
+  location ~ \.php$ {
+     fastcgi_pass unix:/run/php/php5.6-fpm.sock;  #Sesuaikan dengan versi PHP
+     fastcgi_index index.php;
+     fastcgi_param SCRIPT_FILENAME {{ destdir }}$fastcgi_script_name;
+     include fastcgi_params;
+  }
+}
+```
+36. 
+```
+cd ../handlers
+sudo nano main.yml
+
+```
+```
+---
+- name: restart nginx
+  become: yes
+  become_user: root
+  become_method: su
+  action: service name=nginx state=restarted
+
+- name: restart php
+  become: yes
+  become_user: root
+  become_method: su
+  action: service name=php5.6-fpm state=restarted
+```
+37. selanjutnya yii
+```
+cd ../../
+sudo mkdir -p yii/tasks
+sudo mkdir -p yii/templates
+sudo mkdir -p yii/handler
+```
+38. 
+```
+cd yii/tasks
+sudo nano main.yml
+```
+```
+---
+- name: delete apt chache
+  become: yes
+  become_user: root
+  become_method: su
+  command: rm -vf /var/lib/apt/lists/*
+
+- name: isntall php
+  become: yes
+  become_user: root
+  become_method: su
+  apt: name={{ item }} state=latest update-cache=true
+  with_items:
+    - curl
+    - nginx
+    - nginx-extras
+    - php7.4
+    - php7.4-fpm
+    - php7.4-curl
+    - php7.4-xml
+    - php7.4-gd
+    - php7.4-opcache
+    - php7.4-mbstring
+    - php7.4-zip
+    - php7.4-json
+    - php7.4-cli
+
+
+- name: Download and install Composer
+  shell: curl -sS https://getcomposer.org/installer | php
+  args:
+    chdir: /usr/src/
+    creates: /usr/local/bin/composer
+    warn: false
+  become: yes
+
+- name: Add Composer to global patch
+  copy:
+    dest: /usr/local/bin/composer
+    group: root
+    mode: '0755'
+    owner: root
+    src: /usr/src/composer.phar
+    remote_src: yes
+  become: yes
+
+- name: Ansible delete file create-project
+  file:
+    path: /var/www/html/basic
+    state: absent
+
+- name: composer create-project
+  shell: /usr/local/bin/composer create-project yiisoft/yii2-app-basic /var/www/html/basic --prefer-dist --no-interaction
+
+- name: chmod
+  become: yes
+  become_user: root
+  become_method: su
+  commnad: chmod +x /usr/local/bin/composer
+
+- name: composer
+  shell: cd /var/www/html/basic; /usr/local/bin/composer install --no-interaction
+
+- name: Copy yii.conf
+  template:
+    src=templates/yii.conf
+    dest=/etc/nginx/sites-available/{{ domain }}
+  vars:
+    servername: '{{ domain }}'
+
+- name: Symlink yii.conf
+  command: ln -sfn /etc/nginx/sites-available/{{ domain }} /etc/nginx/sites-enabled/{{ domain }}
+  notify:
+    - restart nginx
+
+- name: Write {{ domain }} to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ domain }}$'
+    line: "127.0.0.1 {{ domain  }"
+```
+39. 
+```
+cd ../templates
+sudo nano yii.conf
+```
+```
+server {
+    set $host_path "/var/www/html/basic";
+    #access_log  /www/basic/log/access.log main;
+    server_name  lxc_php7_6.dev www.lxc_php7_6.dev;
+    root   $host_path/web;
+    set $yii_bootstrap "index.php";
+
+    charset utf-8;
+    location / {
+        index  index.html $yii_bootstrap;
+        try_files $uri $uri/ /$yii_bootstrap?$args;
+    }
+    location ~ ^/(protected|framework|themes/\w+/views) {
+        deny  all;
+    }
+    #avoid processing of calls to unexsisting static files by yii
+    location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+        try_files $uri =404;
+    }
+    #pass the PHP scripts to FastCGI server listening on UNIX socket
+    location ~ \.php {
+        fastcgi_split_path_info  ^(.+\.php)(.*)$;
+        #let yii catch the call to unexisting PHP files
+        set $fsn /$yii_bootstrap;
+        if (-f $document_root$fastcgi_script_name){
+            set $fsn $fastcgi_script_name;
+        }
+        fastcgi_pass  unix:/run/php/php7.4-fpm.sock;
+        include fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fsn;
+
+        #PATH_INFO and PATH_TRANSLATED can be omitted, but RFC 3875 specifies them for CGI
+        fastcgi_param PATH_INFO         $fastcgi_path_info;
+        fastcgi_param PATH_TRASTLATED   $document_root$fsn;
+    }
+
+    #prevent nginx from serving dotfiles (.htaccess, .svn, .git, etc.)
+    location ~/\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}
+```
+40. 
+```
+cd ../handlers
+sudo nano main.yml
+```
+```
+---
+- name: restart php
+  become: yes
+  become_user: root
+  become_method: su
+  action: service name=php7.4-fpm state=restarted
+
+- name: restart nginx
+  become: yes
+  become_user: root
+  become_method: su
+  action: service name=nginx state=restarted
+```
+41. 
+```
 
 ```
 ```
 
 ```
+42. 
+```
 
+```
+```
+
+```
+43. 
+```
+
+```
+```
+
+```
+44. 
+```
+
+```
+```
+
+```
+45. 
+```
+
+```
+```
+
+```
+46. 
+```
+
+```
+```
+
+```
+47. 
+```
+
+```
+```
+
+```
+48. 
+```
+
+```
+```
+
+```
+49. 
+```
+
+```
+```
+
+```
+50. 
+```
+
+```
+```
+
+```
 
 
 
